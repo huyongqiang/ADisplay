@@ -19,14 +19,15 @@ public:
 	static Scene* createScene();
 
 private:
-	void menuCallback(Ref* sender);
 	void getFileList(string path);
 	void updateContent(float dt);
 	float getSpriteResizeScale(Sprite* sp, float width=0);
+	void judgeIndexOverflow();
 
 private:
 	vector<string> fileList;
 	Sprite *preSp, *curSp, *nextSp, *nextNextSp;
 	Vec2 prePos, curPos, nextPos, nextNextPos;
+	int index;
 };
 

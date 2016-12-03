@@ -5,6 +5,7 @@
 
 StartScene::StartScene()
 {
+	index = 0;
 }
 
 StartScene::~StartScene()
@@ -56,39 +57,34 @@ bool StartScene::init()
 	auto pt = Sequence::createWithTwoActions(ProgressTo::create(intervalValue, 100), ProgressTo::create(0, 0));
 	progressBar->runAction(RepeatForever::create(pt));
 
-	
-	/*for (auto item : fileList){
-		auto sp = Sprite::create(item);
-		sp->setPosition(Vec2(size.width / 2, size.height / 2));
-		addChild(sp);
-	}*/
-
-	/*auto play = MenuItemFont::create("Play", CC_CALLBACK_1(StartScene::menuCallback, this));
-	play->setPosition(size.width / 2, size.height / 2);
-	auto menu = Menu::create(play, NULL);
-	menu->setPosition(Vec2::ZERO);
-	addChild(menu);*/
-
 	prePos = Vec2(-size.width * 0.25, size.height / 2);
 	curPos = Vec2(size.width / 2, size.height / 2);
 	nextPos = Vec2(size.width * 1.25, size.height / 2);
 	nextNextPos = Vec2(size.width * 1.5, size.height / 2);
 	
-	preSp = Sprite::create(fileList.at(0));
+	preSp = Sprite::create(fileList.at(index));
 	preSp->setPosition(prePos);
 	addChild(preSp);
+	index++;
+	judgeIndexOverflow();
 
-	curSp = Sprite::create(fileList.at(1));
+	curSp = Sprite::create(fileList.at(index));
 	curSp->setPosition(curPos);
-	addChild(curSp, 1);
+	addChild(curSp);
+	index++;
+	judgeIndexOverflow();
 
-	nextSp = Sprite::create(fileList.at(2));
+	nextSp = Sprite::create(fileList.at(index));
 	nextSp->setPosition(nextPos);
 	addChild(nextSp);
+	index++;
+	judgeIndexOverflow();
 
-	nextNextSp = Sprite::create(fileList.at(3));
+	nextNextSp = Sprite::create(fileList.at(index));
 	nextNextSp->setPosition(nextNextPos);
 	addChild(nextNextSp);
+	index++;
+	judgeIndexOverflow();
 
 	curSp->setScale(getSpriteResizeScale(curSp));
 	preSp->setScale(getSpriteResizeScale(preSp, size.width*0.25));
@@ -97,8 +93,6 @@ bool StartScene::init()
 
 	schedule(schedule_selector(StartScene::updateContent), intervalValue);
 	
-	
-
 	return true;
 }
 
@@ -120,11 +114,6 @@ float StartScene::getSpriteResizeScale(Sprite* sp, float width)
 	}
 }
 
-void StartScene::menuCallback(Ref* sender)
-{
-	Director::getInstance()->replaceScene(SplashLayer::createScene());
-}
-
 void StartScene::updateContent(float dt)
 {
 	auto time = 2.0f;
@@ -134,14 +123,26 @@ void StartScene::updateContent(float dt)
 	nextSp->runAction(EaseExponentialOut::create(ScaleTo::create(time, getSpriteResizeScale(nextSp))));
 	nextNextSp->runAction(Sequence::create(MoveTo::create(time, nextPos),
 		CallFunc::create([=](){
-		auto temp = preSp;
+		
 		preSp = curSp;
 		curSp = nextSp;
 		nextSp = nextNextSp;
-		nextNextSp = temp;
 
+		nextNextSp =  Sprite::create(fileList.at(index));
 		nextNextSp->setPosition(nextNextPos);
+		addChild(nextNextSp);
+		nextNextSp->setScale(getSpriteResizeScale(nextNextSp, size.width*0.25));
+		index++;
+
+		judgeIndexOverflow();
+		
 	}), NULL));
+}
+
+void StartScene::judgeIndexOverflow()
+{
+	if (index >= fileList.size())
+		index = 0;
 }
 
 void StartScene::getFileList(string path)

@@ -27,7 +27,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-        glview = GLViewImpl::createWithRect("My Game", Rect(0,0, 1245, 700));
+		glview = GLViewImpl::createWithFullScreen("ADisplay");
+		//glview = GLViewImpl::createWithRect("ADisplay", Rect(0, 0, 1245, 700));
         director->setOpenGLView(glview);
     }
 	glview->setDesignResolutionSize(1366, 768, ResolutionPolicy::FIXED_HEIGHT);
