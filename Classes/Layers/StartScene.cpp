@@ -60,7 +60,32 @@ bool StartScene::init()
 	addChild(menu);*/
 	
 	
-	
+	auto sp = Sprite::create(fileList.at(0));
+	sp->setPosition(Vec2(size.width / 2, size.height / 2));
+	addChild(sp);
+
+	auto imgWidth = sp->getContentSize().width;
+	auto imgHeight = sp->getContentSize().height;
+	auto scaleWidth = imgHeight / size.height*size.width;
+	auto scaleHeight = imgWidth / size.width*size.height;
+	if (scaleWidth > size.width)
+	{
+		sp->setScale(size.height / imgHeight);
+	}
+	else if (scaleHeight > size.height)
+	{
+		sp->setScale(size.width / imgWidth);
+	}
+	else if (scaleWidth > scaleHeight)
+	{
+		sp->setScale(size.height / imgHeight);
+	}
+	else
+	{
+		sp->setScale(size.width / imgWidth);
+	}
+
+
 	
 		
 
