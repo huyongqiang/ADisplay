@@ -28,6 +28,5 @@ private:
 	vector<string> fileList;
 	Sprite *preSp, *curSp, *nextSp, *nextNextSp;
 	Vec2 prePos, curPos, nextPos, nextNextPos;
-
 };
 

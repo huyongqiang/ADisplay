@@ -46,6 +46,16 @@ bool StartScene::init()
 	float intervalValue = stof(intervalText);
 	delete doc;
 
+	auto progressBar = ProgressTimer::create(Sprite::create("res/progressbar.png"));
+	progressBar->setPosition(Vec2(size.width / 2, progressBar->getContentSize().height / 2));
+	progressBar->setType(ProgressTimer::Type::BAR);
+	progressBar->setBarChangeRate(Vec2(1, 0));
+	progressBar->setMidpoint(Vec2(0, 0));
+	progressBar->setReverseDirection(true);
+	addChild(progressBar, 10);
+	auto pt = Sequence::createWithTwoActions(ProgressTo::create(intervalValue, 100), ProgressTo::create(0, 0));
+	progressBar->runAction(RepeatForever::create(pt));
+
 	
 	/*for (auto item : fileList){
 		auto sp = Sprite::create(item);
