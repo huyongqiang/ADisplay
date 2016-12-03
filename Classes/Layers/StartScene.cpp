@@ -42,9 +42,9 @@ bool StartScene::init()
 	doc->LoadFile(FileUtils::getInstance()->fullPathForFilename("settings/settings.xml").c_str());
 	auto root = doc->RootElement();
 	auto interval = root->FirstChildElement();
-	auto intervalValue = interval->GetText();
-
-
+	auto intervalText = interval->GetText();
+	float intervalValue = stof(intervalText);
+	delete doc;
 
 	
 	/*for (auto item : fileList){
@@ -58,43 +58,76 @@ bool StartScene::init()
 	auto menu = Menu::create(play, NULL);
 	menu->setPosition(Vec2::ZERO);
 	addChild(menu);*/
-	
-	
-	auto sp = Sprite::create(fileList.at(0));
-	sp->setPosition(Vec2(size.width / 2, size.height / 2));
-	addChild(sp);
 
+	prePos = Vec2(-size.width / 2, size.height / 2);
+	curPos = Vec2(size.width / 2, size.height / 2);
+	nextPos = Vec2(size.width * 1.5, size.height / 2);
+	nextNextPos = Vec2(size.width * 2.5, size.height / 2);
+	
+	preSp = Sprite::create(fileList.at(0));
+	preSp->setPosition(prePos);
+	addChild(preSp);
+
+	curSp = Sprite::create(fileList.at(1));
+	curSp->setPosition(curPos);
+	addChild(curSp);
+
+	nextSp = Sprite::create(fileList.at(2));
+	nextSp->setPosition(nextPos);
+	addChild(nextSp);
+
+	nextNextSp = Sprite::create(fileList.at(3));
+	nextNextSp->setPosition(nextNextPos);
+	addChild(nextNextSp);
+
+	resizeSprite(curSp);
+
+	schedule(schedule_selector(StartScene::updateContent), intervalValue);
+	
+	
+
+	return true;
+}
+
+void StartScene::resizeSprite(Sprite* sp)
+{
 	auto imgWidth = sp->getContentSize().width;
 	auto imgHeight = sp->getContentSize().height;
 	auto scaleWidth = imgHeight / size.height*size.width;
 	auto scaleHeight = imgWidth / size.width*size.height;
 	if (scaleWidth > size.width)
-	{
 		sp->setScale(size.height / imgHeight);
-	}
 	else if (scaleHeight > size.height)
-	{
 		sp->setScale(size.width / imgWidth);
-	}
 	else if (scaleWidth > scaleHeight)
-	{
 		sp->setScale(size.height / imgHeight);
-	}
 	else
-	{
 		sp->setScale(size.width / imgWidth);
-	}
-
-
-	
-		
-
-	return true;
 }
 
 void StartScene::menuCallback(Ref* sender)
 {
 	Director::getInstance()->replaceScene(SplashLayer::createScene());
+}
+
+void StartScene::updateContent(float dt)
+{
+	curSp->setScale(1);
+
+	auto time = 2.0f;
+	curSp->runAction(MoveTo::create(time, prePos));
+	nextSp->runAction(MoveTo::create(time, curPos));
+	nextNextSp->runAction(MoveTo::create(time, nextPos));
+	//preSp->setPosition(nextNextPos);
+	auto temp = preSp;
+	preSp = curSp;
+	curSp = nextSp;
+	nextSp = nextNextSp;
+	nextNextSp = temp;
+
+	nextNextSp->setPosition(nextNextPos);
+	resizeSprite(curSp);
+
 }
 
 void StartScene::getFileList(string path)

@@ -21,9 +21,13 @@ public:
 private:
 	void menuCallback(Ref* sender);
 	void getFileList(string path);
+	void updateContent(float dt);
+	void resizeSprite(Sprite* sp);
 
 private:
 	vector<string> fileList;
+	Sprite *preSp, *curSp, *nextSp, *nextNextSp;
+	Vec2 prePos, curPos, nextPos, nextNextPos;
 
 };
 
