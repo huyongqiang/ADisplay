@@ -1,6 +1,7 @@
 #include "StartScene.h"
 #include "SplashLayer.h"
 #include "GameManager.h"
+#include "../external/tinyxml2/tinyxml2.h"
 
 StartScene::StartScene()
 {
@@ -36,18 +37,28 @@ bool StartScene::init()
 	auto paths = FileUtils::getInstance()->getSearchPaths();
 	getFileList(paths.at(1).c_str());
 
+	//get interval value of the settings
+	auto doc = new tinyxml2::XMLDocument();
+	doc->LoadFile(FileUtils::getInstance()->fullPathForFilename("settings/settings.xml").c_str());
+	auto root = doc->RootElement();
+	auto interval = root->FirstChildElement();
+	auto intervalValue = interval->GetText();
+
+
+
 	
-	for (auto item : fileList){
+	/*for (auto item : fileList){
 		auto sp = Sprite::create(item);
 		sp->setPosition(Vec2(size.width / 2, size.height / 2));
 		addChild(sp);
-	}
+	}*/
 
 	/*auto play = MenuItemFont::create("Play", CC_CALLBACK_1(StartScene::menuCallback, this));
 	play->setPosition(size.width / 2, size.height / 2);
 	auto menu = Menu::create(play, NULL);
 	menu->setPosition(Vec2::ZERO);
 	addChild(menu);*/
+	
 	
 	
 	
