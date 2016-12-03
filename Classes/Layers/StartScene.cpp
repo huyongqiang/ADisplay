@@ -106,9 +106,9 @@ void StartScene::resizeSprite(Sprite* sp)
 	auto scaleHeight = size.height / imgHeight;
 	auto scaleWidth = size.width / imgWidth;
 	if (scaleWidth > scaleHeight)
-		sp->setScale(size.height / imgHeight);
+		sp->setScale(scaleHeight);
 	else
-		sp->setScale(size.width / imgWidth);
+		sp->setScale(scaleWidth);
 }
 
 void StartScene::menuCallback(Ref* sender)
