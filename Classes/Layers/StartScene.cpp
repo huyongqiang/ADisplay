@@ -103,13 +103,9 @@ void StartScene::resizeSprite(Sprite* sp)
 {
 	auto imgWidth = sp->getContentSize().width;
 	auto imgHeight = sp->getContentSize().height;
-	auto scaleWidth = imgHeight / size.height*size.width;
-	auto scaleHeight = imgWidth / size.width*size.height;
-	if (scaleWidth > size.width)
-		sp->setScale(size.height / imgHeight);
-	else if (scaleHeight > size.height)
-		sp->setScale(size.width / imgWidth);
-	else if (scaleWidth > scaleHeight)
+	auto scaleHeight = size.height / imgHeight;
+	auto scaleWidth = size.width / imgWidth;
+	if (scaleWidth > scaleHeight)
 		sp->setScale(size.height / imgHeight);
 	else
 		sp->setScale(size.width / imgWidth);
