@@ -69,10 +69,10 @@ bool StartScene::init()
 	menu->setPosition(Vec2::ZERO);
 	addChild(menu);*/
 
-	prePos = Vec2(-size.width / 2, size.height / 2);
+	prePos = Vec2(-size.width * 0.25, size.height / 2);
 	curPos = Vec2(size.width / 2, size.height / 2);
-	nextPos = Vec2(size.width * 1.5, size.height / 2);
-	nextNextPos = Vec2(size.width * 2.5, size.height / 2);
+	nextPos = Vec2(size.width * 1.25, size.height / 2);
+	nextNextPos = Vec2(size.width * 1.5, size.height / 2);
 	
 	preSp = Sprite::create(fileList.at(0));
 	preSp->setPosition(prePos);
@@ -80,7 +80,7 @@ bool StartScene::init()
 
 	curSp = Sprite::create(fileList.at(1));
 	curSp->setPosition(curPos);
-	addChild(curSp);
+	addChild(curSp, 1);
 
 	nextSp = Sprite::create(fileList.at(2));
 	nextSp->setPosition(nextPos);
@@ -90,7 +90,10 @@ bool StartScene::init()
 	nextNextSp->setPosition(nextNextPos);
 	addChild(nextNextSp);
 
-	resizeSprite(curSp);
+	curSp->setScale(getSpriteResizeScale(curSp));
+	preSp->setScale(getSpriteResizeScale(preSp, size.width*0.25));
+	nextSp->setScale(getSpriteResizeScale(nextSp, size.width*0.25));
+	nextNextSp->setScale(getSpriteResizeScale(nextNextSp, size.width*0.25));
 
 	schedule(schedule_selector(StartScene::updateContent), intervalValue);
 	
@@ -99,16 +102,22 @@ bool StartScene::init()
 	return true;
 }
 
-void StartScene::resizeSprite(Sprite* sp)
+float StartScene::getSpriteResizeScale(Sprite* sp, float width)
 {
-	auto imgWidth = sp->getContentSize().width;
-	auto imgHeight = sp->getContentSize().height;
-	auto scaleHeight = size.height / imgHeight;
-	auto scaleWidth = size.width / imgWidth;
-	if (scaleWidth > scaleHeight)
-		sp->setScale(scaleHeight);
+	if (width == 0){
+		auto imgWidth = sp->getContentSize().width;
+		auto imgHeight = sp->getContentSize().height;
+		auto scaleHeight = size.height / imgHeight;
+		auto scaleWidth = size.width / imgWidth;
+		if (scaleWidth > scaleHeight)
+			return scaleHeight;
+		else
+			return scaleWidth;
+	}
 	else
-		sp->setScale(scaleWidth);
+	{
+		return width / sp->getContentSize().width;
+	}
 }
 
 void StartScene::menuCallback(Ref* sender)
@@ -118,22 +127,21 @@ void StartScene::menuCallback(Ref* sender)
 
 void StartScene::updateContent(float dt)
 {
-	curSp->setScale(1);
-
 	auto time = 2.0f;
-	curSp->runAction(MoveTo::create(time, prePos));
-	nextSp->runAction(MoveTo::create(time, curPos));
-	nextNextSp->runAction(MoveTo::create(time, nextPos));
-	//preSp->setPosition(nextNextPos);
-	auto temp = preSp;
-	preSp = curSp;
-	curSp = nextSp;
-	nextSp = nextNextSp;
-	nextNextSp = temp;
+	curSp->runAction(EaseExponentialOut::create(MoveTo::create(time, prePos)));
+	curSp->runAction(EaseExponentialOut::create(ScaleTo::create(time, getSpriteResizeScale(curSp, size.width * 0.25))));
+	nextSp->runAction(EaseExponentialOut::create(MoveTo::create(time, curPos)));
+	nextSp->runAction(EaseExponentialOut::create(ScaleTo::create(time, getSpriteResizeScale(nextSp))));
+	nextNextSp->runAction(Sequence::create(MoveTo::create(time, nextPos),
+		CallFunc::create([=](){
+		auto temp = preSp;
+		preSp = curSp;
+		curSp = nextSp;
+		nextSp = nextNextSp;
+		nextNextSp = temp;
 
-	nextNextSp->setPosition(nextNextPos);
-	resizeSprite(curSp);
-
+		nextNextSp->setPosition(nextNextPos);
+	}), NULL));
 }
 
 void StartScene::getFileList(string path)
