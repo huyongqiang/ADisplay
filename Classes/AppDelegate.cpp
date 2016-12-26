@@ -24,20 +24,26 @@ void AppDelegate::initGLContextAttrs()
 
 bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
+	//glfwInit();
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
     if(!glview) {
-
-		int monitorCount;
+		/*int monitorCount = 0;
 		auto monitors = glfwGetMonitors(&monitorCount);
-		if (nullptr == monitors)
-			return false;
-
-		const GLFWvidmode* videoMode = glfwGetVideoMode(monitors[1]);
-
-		glview = GLViewImpl::createWithFullScreen("ADisplay", videoMode, monitors[1]);
-		//glview = GLViewImpl::createWithRect("ADisplay", Rect(30, 500, 1245, 700));
-        director->setOpenGLView(glview);
+		log("monitor %d.", monitorCount);*/
+		
+		/*if (monitorCount >= 1){*/
+			glview = GLViewImpl::createWithFullScreen("ADisplay");
+			//glview = GLViewImpl::createWithRect("ADisplay", Rect(30, 500, 1245, 700));
+			director->setOpenGLView(glview);
+		//}
+		//else
+		//{
+		//	/*MessageBox("number of monitor is less 2", "Waring");
+		//	return false;*/
+		//	glview = GLViewImpl::createWithRect("ADisplay", Rect(30, 500, 405, 300));
+		//	director->setOpenGLView(glview);
+		//}
     }
 
 	glview->setDesignResolutionSize(1366, 768, ResolutionPolicy::FIXED_HEIGHT);
